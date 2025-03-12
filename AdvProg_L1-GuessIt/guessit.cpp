@@ -5,31 +5,33 @@
 
 using namespace std;
 
-
 /***
     Args:
-        
+
     Returns:
         number (int) : random number in range 1-100
 ***/
-int generateRandomNumber() {
-    // TODO: Return the random number in range 1 to 100
-    return 100;
+int generateRandomNumber()
+{
+    int randomNumber = 1 + rand() % 100;
+    return randomNumber;
 }
-
 
 /***
     Args:
-        
+
     Returns:
         number (int) : the number that player guessed
 ***/
-int getPlayerGuess() {
-    // TODO: Ask the player guest and return the player's number
+int getPlayerGuess()
+{
+    int playerGuess;
 
-    return 1;
+    cout << "Enter your guess: ";
+    cin >> playerGuess;
+
+    return playerGuess;
 }
-
 
 /***
     Args:
@@ -38,8 +40,9 @@ int getPlayerGuess() {
     Returns:
         answer (string) : answer of computer after checking result
 ***/
-string getAnswer(int number, int randomNumber) {
-    /*** 
+string getAnswer(int number, int randomNumber)
+{
+    /***
         TODO: check number with randomNumber and return the result.
               If number is higher than randomNumber, the answer is "Your number is higher."
               If number is lower than randomNumber, the answer is "Your number is lower."
@@ -47,9 +50,21 @@ string getAnswer(int number, int randomNumber) {
     ***/
     string answer;
 
+    if (number > randomNumber)
+    {
+        answer = "Your number is higher.";
+    }
+    else if (number < randomNumber)
+    {
+        answer = "Your number is lower.";
+    }
+    else if (number == randomNumber)
+    {
+        answer = "Congratulation! You win.";
+    }
+
     return answer;
 }
-
 
 /***
     Args:
@@ -57,12 +72,11 @@ string getAnswer(int number, int randomNumber) {
     Returns:
         result (bool) : player win or not
 ***/
-bool checkSuccess(string answer) {
+bool checkSuccess(string answer)
+{
     // TODO: return the result after checking that player guessed right or wrong
-    
-    return true;
+    return answer == "Congratulation! You win.";
 }
-
 
 /***
     Args:
@@ -70,44 +84,50 @@ bool checkSuccess(string answer) {
     Returns:
         result (bool) : continue playing or not
 ***/
-bool checkContinuePlaying(char isContinued) {
+bool checkContinuePlaying(char isContinued)
+{
     // TODO: return result after checking player continue playing or not
-    bool result = false;
-
-    return result;
+    return isContinued == 'Y';
 }
-
 
 /***
     Args:
-        
+
     Returns:
         isContinues (char) : player's choice (continue playing or not)
 ***/
-char getPlayerOpinion() {
-    // TODO: Ask the player about continue playing and return the player's choice
+char getPlayerOpinion()
+{
     char isContinued;
+    do
+    {
+        cout << "Do you want to continue playing? (Y/N): ";
+        cin >> isContinued;
+    } while (isContinued != 'N' && isContinued != 'Y');
 
     return isContinued;
 }
 
-
-void playGuessIt() {
+void playGuessIt()
+{
     int randomNumber = generateRandomNumber();
     int number;
     string answer;
-    
-    do {
+
+    do
+    {
         number = getPlayerGuess();
         answer = getAnswer(number, randomNumber);
         cout << answer << endl;
     } while (!checkSuccess(answer));
 }
 
-int run() {
+int run()
+{
     srand(time(0));
     char isContinued;
-    do {
+    do
+    {
         playGuessIt();
         isContinued = getPlayerOpinion();
     } while (checkContinuePlaying(isContinued));

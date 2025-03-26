@@ -6,7 +6,6 @@ all:
 	g++ -std=c++17 -c mainTest.cpp
 	g++ -std=c++17 hangman.o mainTest.o -lcppunit -o mainTest 
 run:
-	chmod +x main
 	./main
 test:
 	chmod +x mainTest

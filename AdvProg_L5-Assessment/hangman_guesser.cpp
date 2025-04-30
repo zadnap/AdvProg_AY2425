@@ -1,14 +1,14 @@
 #include "hangman_guesser.h"
 
+using std::map;
+using std::set;
 using std::string;
 using std::vector;
-using std::set;
-using std::map;
 
-char nextCharWhenWordIsNotInDictionary(const set<char>& selectedChars);
-map<char, int> countOccurrences(const vector<string>& candidateWords);
-char findMostFrequentChar(const map<char, int>& occurrences, const set<char>& selectedChars);
-bool wordConformToMask(const string& word, const string& mask, char ch);
+char nextCharWhenWordIsNotInDictionary(const set<char> &selectedChars);
+map<char, int> countOccurrences(const vector<string> &candidateWords);
+char findMostFrequentChar(const map<char, int> &occurrences, const set<char> &selectedChars);
+bool wordConformToMask(const string &word, const string &mask, char ch);
 
 HangmanGuesser::HangmanGuesser(std::string wordFilePath)
 {
@@ -24,26 +24,35 @@ void HangmanGuesser::newGame(int wordLen, char mask_char)
 
 char HangmanGuesser::getChar(string mask)
 {
-    if (selectedChars.empty()) {    // A new game
+    if (selectedChars.empty())
+    { // A new game
         filterCandidateWordsByLen(mask.size());
-    } else {
-        if (isCharInWord(ch, mask)) {   // Guess a correct char
+    }
+    else
+    {
+        if (isCharInWord(ch, mask))
+        { // Guess a correct char
             filterCandidateWordsByMask(mask);
-        } else {                        // Incorrect char
+        }
+        else
+        { // Incorrect char
             filterCandidateWordsByLastIncorrectChar();
         }
     }
 
     ch = findBestChar();
-    if (ch != 0) selectedChars.insert(ch);
+    if (ch != 0)
+        selectedChars.insert(ch);
     return ch;
 }
 
 void HangmanGuesser::filterCandidateWordsByLen(int wordLen)
 {
     candidateWords.clear();
-    for (int i=0; i < vocabulary.size(); ++i) {
-        if (vocabulary[i].size() == wordLen) {
+    for (int i = 0; i < vocabulary.size(); ++i)
+    {
+        if (vocabulary[i].size() == wordLen)
+        {
             candidateWords.push_back(vocabulary[i]);
         }
     }
@@ -52,8 +61,10 @@ void HangmanGuesser::filterCandidateWordsByLen(int wordLen)
 void HangmanGuesser::filterCandidateWordsByMask(string mask)
 {
     vector<string> newWords;
-    for (vector<string>::const_iterator it = candidateWords.begin(); it != candidateWords.end(); ++it) {
-        if (wordConformToMask(*it, mask, ch)) {
+    for (vector<string>::const_iterator it = candidateWords.begin(); it != candidateWords.end(); ++it)
+    {
+        if (wordConformToMask(*it, mask, ch))
+        {
             newWords.push_back(*it);
         }
     }
@@ -63,8 +74,10 @@ void HangmanGuesser::filterCandidateWordsByMask(string mask)
 void HangmanGuesser::filterCandidateWordsByLastIncorrectChar()
 {
     vector<string> newWords;
-    for (vector<string>::const_iterator it = candidateWords.begin(); it != candidateWords.end(); ++it) {
-        if (!isCharInWord(ch, *it)) {
+    for (vector<string>::const_iterator it = candidateWords.begin(); it != candidateWords.end(); ++it)
+    {
+        if (!isCharInWord(ch, *it))
+        {
             newWords.push_back(*it);
         }
     }
@@ -73,40 +86,49 @@ void HangmanGuesser::filterCandidateWordsByLastIncorrectChar()
 
 char HangmanGuesser::findBestChar()
 {
-    if (candidateWords.size() == 0) {
+    if (candidateWords.size() == 0)
+    {
         return nextCharWhenWordIsNotInDictionary(selectedChars);
     }
 
     map<char, int> occurrences = countOccurrences(candidateWords);
     char max_char = findMostFrequentChar(occurrences, selectedChars);
 
-    if (max_char == 0) {
+    if (max_char == 0)
+    {
         return nextCharWhenWordIsNotInDictionary(selectedChars);
-    } else {
+    }
+    else
+    {
         return max_char;
     }
 }
 
-char nextCharWhenWordIsNotInDictionary(const set<char>& selectedChars)
+char nextCharWhenWordIsNotInDictionary(const set<char> &selectedChars)
 {
-    for (char c = 'a'; c <= 'z'; ++c) {
-        if (charNotInSet(c, selectedChars)) {
+    for (char c = 'a'; c <= 'z'; ++c)
+    {
+        if (charNotInSet(c, selectedChars))
+        {
             return c;
         }
     }
     return 0;
 }
 
-map<char, int> countOccurrences(const vector<string>& candidateWords)
+map<char, int> countOccurrences(const vector<string> &candidateWords)
 {
     map<char, int> occurrences;
     int numOfWords = candidateWords.size();
     int numOfChars = candidateWords[0].size(); // Tat ca cac tu cung do dai
-    for (int i = 0; i < numOfWords; ++i) {
+    for (int i = 0; i < numOfWords; ++i)
+    {
         string word = candidateWords[i];
         set<char> charsOfWords;
-        for (int j = 0; j < numOfChars; ++j) {
-            if (charNotInSet(word[j], charsOfWords)) {
+        for (int j = 0; j < numOfChars; ++j)
+        {
+            if (charNotInSet(word[j], charsOfWords))
+            {
                 occurrences[word[j]] += 1;
                 charsOfWords.insert(word[j]);
             }
@@ -115,12 +137,14 @@ map<char, int> countOccurrences(const vector<string>& candidateWords)
     return occurrences;
 }
 
-char findMostFrequentChar(const map<char, int>& occurrences, const set<char>& selectedChars)
+char findMostFrequentChar(const map<char, int> &occurrences, const set<char> &selectedChars)
 {
     char max_char = 0;
     int max_occur = 0;
-    for (map<char, int>::const_iterator it = occurrences.begin(); it != occurrences.end(); ++it) {
-        if (max_occur < it->second && charNotInSet(it->first, selectedChars) ) {
+    for (map<char, int>::const_iterator it = occurrences.begin(); it != occurrences.end(); ++it)
+    {
+        if (max_occur < it->second && charNotInSet(it->first, selectedChars))
+        {
             max_occur = it->second;
             max_char = it->first;
         }
@@ -128,13 +152,14 @@ char findMostFrequentChar(const map<char, int>& occurrences, const set<char>& se
     return max_char;
 }
 
-bool wordConformToMask(const string& word, const string& mask, char ch)
+bool wordConformToMask(const string &word, const string &mask, char ch)
 {
-    for (int i = 0; i < mask.size(); ++i) {
-        if ( (mask[i] == ch && word[i] != ch) || (word[i] == ch && mask[i] != ch) ) {
+    for (int i = 0; i < mask.size(); ++i)
+    {
+        if ((mask[i] == ch && word[i] != ch) || (word[i] == ch && mask[i] != ch))
+        {
             return false;
         }
     }
     return true;
 }
-
